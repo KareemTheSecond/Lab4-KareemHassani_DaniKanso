@@ -83,7 +83,7 @@ def init_db(path):
         student_id TEXT PRIMARY KEY,
         name TEXT,
         age INTEGER,
-        _email TEXT
+        email TEXT
     )""")
     
     conn.execute("""
@@ -91,7 +91,7 @@ def init_db(path):
         instructor_id TEXT PRIMARY KEY,
         name TEXT,
         age INTEGER,
-        _email TEXT
+        email TEXT
     )""")
     
     conn.execute("""
@@ -124,9 +124,9 @@ def reload_from_db():
     crsById = {}
     stuById = {}
     
-    c1 = conn.execute("SELECT instructor_id, name, age, _email FROM instructors")
+    c1 = conn.execute("SELECT instructor_id, name, age, email FROM instructors")
     for r in c1.fetchall():
-        ins = Instructor(r["name"], r["age"], r["_email"], r["instructor_id"])
+        ins = Instructor(r["name"], r["age"], r["email"], r["instructor_id"])
         instructors.append(ins)
         insById[ins.instructor_id] = ins
     c2 = conn.execute("SELECT course_id, course_name, instructor_id FROM courses")
@@ -146,13 +146,13 @@ def reload_from_db():
             if not found:
                 
                 insObj.assign_course(c)
-    c3 = conn.execute("SELECT student_id, name, age, _email FROM students")
+    c3 = conn.execute("SELECT student_id, name, age, email FROM students")
     
     
     
     
     for r in c3.fetchall():
-        s = Student(r["name"], r["age"], r["_email"], r["student_id"])
+        s = Student(r["name"], r["age"], r["email"], r["student_id"])
         students.append(s)
         stuById[s.student_id] = s
     c4 = conn.execute("SELECT student_id, course_id FROM registrations")
@@ -210,7 +210,7 @@ def db_add_student(n, a, e, sid):
     if exists_student(sid):
         
         return False
-    conn.execute("INSERT INTO students(student_id, name, age, _email) VALUES(?,?,?,?)", (sid, n, int(a), e))
+    conn.execute("INSERT INTO students(student_id, name, age, email) VALUES(?,?,?,?)", (sid, n, int(a), e))
     conn.commit()
     return True
 
@@ -218,7 +218,7 @@ def db_add_instructor(n, a, e, iid):
     if exists_instructor(iid):
         
         return False
-    conn.execute("INSERT INTO instructors(instructor_id, name, age, _email) VALUES(?,?,?,?)", (iid, n, int(a), e))
+    conn.execute("INSERT INTO instructors(instructor_id, name, age, email) VALUES(?,?,?,?)", (iid, n, int(a), e))
     conn.commit()
     return True
 
@@ -265,7 +265,7 @@ def db_update_student(oldId, newName, newAge, newEmail, newId):
         if exists_student(newId):
             return False
     conn.execute("UPDATE registrations SET student_id=? WHERE student_id=?", (newId, oldId))
-    conn.execute("UPDATE students SET student_id=?, name=?, age=?, _email=? WHERE student_id=?", (newId, newName, int(newAge), newEmail, oldId))
+    conn.execute("UPDATE students SET student_id=?, name=?, age=?, email=? WHERE student_id=?", (newId, newName, int(newAge), newEmail, oldId))
     conn.commit()
     
     return True
@@ -274,7 +274,7 @@ def db_update_instructor(oldId, newName, newAge, newEmail, newId):
     if newId != oldId:
         if exists_instructor(newId):
             return False
-    conn.execute("UPDATE instructors SET instructor_id=?, name=?, age=?, _email=? WHERE instructor_id=?", (newId, newName, int(newAge), newEmail, oldId))
+    conn.execute("UPDATE instructors SET instructor_id=?, name=?, age=?, email=? WHERE instructor_id=?", (newId, newName, int(newAge), newEmail, oldId))
     conn.commit()
     return True
 
@@ -321,7 +321,7 @@ def export_csv_qt():
     try:
         with open("students.csv", "w", newline="", encoding="utf-8") as f:
             w = csv.writer(f)
-            w.writerow(["student_id","name","age","_email","courses"])
+            w.writerow(["student_id","name","age","email","courses"])
             for s in students:
                 cids = []
                 for c in s.registered_courses:
@@ -336,7 +336,7 @@ def export_csv_qt():
                 w.writerow([s.student_id, s.name, s.age, s._email, ",".join(cids)])
         with open("instructors.csv", "w", newline="", encoding="utf-8") as f:
             w = csv.writer(f)
-            w.writerow(["instructor_id","name","age","_email","courses"])
+            w.writerow(["instructor_id","name","age","email","courses"])
             
             
             for ins in instructors:
@@ -480,11 +480,11 @@ class MainWindow(QtWidgets.QMainWindow):
         lay.addWidget(recBox)
         recLay = QtWidgets.QVBoxLayout(recBox)
         self.studentTable = QtWidgets.QTableWidget(0, 5)
-        self.studentTable.setHorizontalHeaderLabels(["student_id","name","age","_email","courses"])
+        self.studentTable.setHorizontalHeaderLabels(["student_id","name","age","email","courses"])
         
         recLay.addWidget(self.studentTable)
         self.instructorTable = QtWidgets.QTableWidget(0, 5)
-        self.instructorTable.setHorizontalHeaderLabels(["instructor_id","name","age","_email","courses"])
+        self.instructorTable.setHorizontalHeaderLabels(["instructor_id","name","age","email","courses"])
         
         recLay.addWidget(self.instructorTable)
         self.courseTable = QtWidgets.QTableWidget(0, 4)

@@ -16,8 +16,6 @@ class Person:
     def introduce(self):
         print("My name is " + self.name + ". I am " + str(self.age) + " years old.")
 
-
-
 class Student(Person):
     def __init__(self, name, age, _email, student_id):
         Person.__init__(self, name, age, _email)

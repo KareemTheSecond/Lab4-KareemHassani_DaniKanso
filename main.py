@@ -7,3 +7,4 @@ mainWin = MainWindow()
 mainWin.resize(1100, 800)
 mainWin.show()
 sys.exit(app.exec_())
+
